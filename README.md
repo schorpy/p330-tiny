@@ -88,6 +88,18 @@ This EFI targets the **Lenovo ThinkCentre P330 Tiny** with an **Intel Core i7-97
   - **Important**: connect to the internet via Ethernet cable first, since OCLP-Mod must download KDK/MetalLib files before USB WiFi is working.
 
 ---
+# iPhone USB pairing
+
+If macOS refuses to pair or trust a connected iPhone (no "Allow" prompt, device not visible in Finder), set SIP correctly:
+
+- Set `csr-active-config` to `03000000` (Data: `AwAAAA==`).
+  - OpenCore path: `NVRAM > Add > 7C436110-AB2A-4BBB-A880-FE41995C9F82 > csr-active-config`
+  - Make sure `csr-active-config` is also listed in `NVRAM > Delete` so the new value is applied on the next boot.
+- `SecureBootModel` can stay `Disabled`.
+- Reboot, connect the iPhone, and tap **Trust** when prompted.
+- If pairing breaks after a macOS/OCLP root-patch session, check `nvram csr-active-config` first — it may have been rewritten.
+
+---
 # Credits
 
 - [Acidanthera](https://github.com/acidanthera) — OpenCore, Lilu, VirtualSMC, WhateverGreen, AppleALC
