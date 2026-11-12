@@ -17,7 +17,7 @@ OpenCore EFI for the Lenovo ThinkCentre P330 Tiny running macOS Tahoe 26.5
 | Sound Card | Realtek ALC235 (layout-id: 11) |
 | Ethernet | Intel I219-LM |
 | Wireless Card | TP-Link Archer T2UB Nano (RTL8821CU, USB) / MTech UW-01 802.11N USB 2.0 (RTL8188FTV) |
-| Bluetooth | RTL8821CU combo (USB, not usable in macOS) |
+| Bluetooth | RTL8821CU combo (WiFi + Bluetooth 4.2, USB) |
 | Bootloader | OpenCore 1.0.7 |
 | SMBIOS | iMac20,2 |
 
@@ -30,8 +30,9 @@ OpenCore EFI for the Lenovo ThinkCentre P330 Tiny running macOS Tahoe 26.5
 | HDMI | YES |
 | Monitor (Arzopa Z1rc 16 inch) | YES |
 | Ethernet | YES (Intel I219-LM) |
-| WiFi | YES (TP-Link Archer T2UB Nano, RTL8821CU — [driver](https://github.com/chris1111/wireless-usb-big-sur-adapter)) |
+| WiFi | YES (TP-Link Archer T2UB Nano AC600, RTL8821CU — TahoeRealtekWiFi.kext) |
 | WiFi (alt) | YES (MTech UW-01 802.11N USB 2.0, RTL8188FTV) |
+| Bluetooth | YES (Archer T2UB Nano BT 4.2 — BlueToolFixup + RealtekBluetoothFirmware/BrcmPatchRAM3) |
 | Audio | YES (ALC235, layout-id 11) |
 
 
@@ -41,7 +42,6 @@ OpenCore EFI for the Lenovo ThinkCentre P330 Tiny running macOS Tahoe 26.5
 | Feature | Status |
 | --------- | --------------------------------------------------- |
 | DisplayPort (DP) | Not Tested |
-| Bluetooth | Not usable (Realtek USB BT unsupported) |
 | AirDrop | Not Tested (requires supported WiFi/BT) |
 | DRM | Software DRM works in Chrome-based browsers |
 
@@ -82,8 +82,9 @@ This EFI targets the **Lenovo ThinkCentre P330 Tiny** with an **Intel Core i7-97
 # Notes
 
 - **BIOS**: disable Secure Boot and CFG Lock, disable VT-d (or keep `DisableIoMapper`), set DVMT Pre-Allocated to 64MB+.
-- **USB WiFi**: use [chris1111/Wireless-USB-Big-Sur-Adapter](https://github.com/chris1111/wireless-usb-big-sur-adapter) for the TP-Link Archer T2UB Nano (RTL8821CU). The MTech UW-01 802.11N USB 2.0 (RTL8188FTV, `0BDA:F179`) also works with the same driver.
+- **USB WiFi**: the TP-Link Archer T2UB Nano (RTL8821CU, `2357:013C` / `0BDA:C820`) works via `TahoeRealtekWiFi.kext` (rtw88 port, macOS 13+). The MTech UW-01 802.11N USB 2.0 (RTL8188FTV, `0BDA:F179`) works with the legacy [chris1111/Wireless-USB-Big-Sur-Adapter](https://github.com/chris1111/wireless-usb-big-sur-adapter) driver.
   - **Important**: connect to the internet via Ethernet cable first. USB WiFi is not available until its driver is installed, so Ethernet is required to download the driver.
+- **Bluetooth**: the Archer T2UB Nano's BT 4.2 works with `BlueToolFixup` + `RealtekBluetoothFirmware` + `BrcmFirmwareRepo`/`BrcmPatchRAM3`. The config also resets `bluetoothExternalDongleFailed` and `bluetoothInternalControllerInfo` via NVRAM Add/Delete.
 - **macOS Tahoe root patches**: use [laobamac/OCLP-Mod](https://github.com/laobamac/OCLP-Mod) for graphics/audio post-install patches on unsupported hardware.
   - **Important**: connect to the internet via Ethernet cable first, since OCLP-Mod must download KDK/MetalLib files before USB WiFi is working.
 
