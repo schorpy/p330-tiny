@@ -101,8 +101,37 @@ If macOS refuses to pair or trust a connected iPhone (no "Allow" prompt, device 
 - If pairing breaks after a macOS/OCLP root-patch session, check `nvram csr-active-config` first — it may have been rewritten.
 
 ---
+# Custom kexts
+
+WiFi and Bluetooth on the TP-Link Archer T2UB Nano use custom-built kexts included in this EFI.
+
+## TahoeRealtekWiFi.kext
+
+- **Source**: [danielnmaldonado/TahoeRealtekWiFi](https://github.com/danielnmaldonado/TahoeRealtekWiFi)
+- **Location**: `EFI/OC/Kexts/TahoeRealtekWiFi.kext`
+- **Build**: 67 (version number never bumped; identify by install date / `otool`)
+
+Changes:
+
+- `src/RTL8192EUDataPath.c` — `rtw_92e_beacon_timeout_ms`: beacon-loss watchdog floor **2s → 30s** (cap 60s). Fixes WiFi death during Bluetooth connect bursts. Verified in the installed binary via `otool` (`0x7530` / `0xEA60`).
+- `kext/RTW88CoexBackend.inc` — `coex88Input`: `input.scanning = (target == IEEE80211_S_SCAN || target != IEEE80211_S_RUN)`. Claims coex scan priority whenever unassociated, so BT paging cannot starve reconnect beacons.
+- `vendor/itl80211/openbsd/net80211/ieee80211_proto.c` — `ieee80211_set_beacon_miss_threshold` `MIN()` units bug fixed (not used by this driver path; corrected anyway).
+
+## RealtekBluetoothFirmware.kext (v1.0.7)
+
+- **Location**: `EFI/OC/Kexts/RealtekBluetoothFirmware.kext`
+- **Note**: `make` regenerates `Info.plist` — re-bump the version and re-add the `0bda:c820` personality after every rebuild.
+
+Changes:
+
+- Skip `SET_CONFIGURATION` during HCI init.
+- Teardown fixes: `mInterruptResp` as a member (not stack), `mTerminating` flag, `terminateHci()` called from `willTerminate`.
+- Result: no more kernel panics on replug with BT on.
+
+---
 # Credits
 
 - [Acidanthera](https://github.com/acidanthera) — OpenCore, Lilu, VirtualSMC, WhateverGreen, AppleALC
 - [chris1111](https://github.com/chris1111) — [Wireless USB OC Adapter drivers](https://github.com/chris1111/wireless-usb-big-sur-adapter) (RTL8821CU)
+- [danielnmaldonado](https://github.com/danielnmaldonado) — [TahoeRealtekWiFi](https://github.com/danielnmaldonado/TahoeRealtekWiFi) (RTL8821CU WiFi) and Realtek Bluetooth firmware fixes
 - [laobamac](https://github.com/laobamac) — [OCLP-Mod](https://github.com/laobamac/OCLP-Mod) root patches
