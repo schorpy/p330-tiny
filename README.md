@@ -1,13 +1,13 @@
-# Lenovo ThinkCentre P330 Tiny Hackintosh
+# Lenovo ThinkStation P330 Tiny Hackintosh
 
-OpenCore EFI for the Lenovo ThinkCentre P330 Tiny running macOS Tahoe 26.5
+OpenCore EFI for the Lenovo ThinkStation P330 Tiny running macOS Tahoe 26.5
 
 ---
 ## Configuration
 
 | Specifications | Detail                                                  |
 | ------------------- | ------------------------------------------- |
-| Computer model | Lenovo ThinkCentre P330 Tiny |
+| Computer model | Lenovo ThinkStation P330 Tiny |
 | Processor | Intel Core i7-9700T (Coffee Lake, 8C/8T, 2.0GHz) |
 | Chipset | Intel Q370 |
 | Memory | DDR4 SODIMM |
@@ -18,7 +18,7 @@ OpenCore EFI for the Lenovo ThinkCentre P330 Tiny running macOS Tahoe 26.5
 | Ethernet | Intel I219-LM |
 | Wireless Card | TP-Link Archer T2UB Nano (RTL8821CU, USB) |
 | Bluetooth | RTL8821CU combo (WiFi + Bluetooth 4.2, USB) |
-| Bootloader | OpenCore 1.0.7 |
+| Bootloader | OpenCore 1.0.8 |
 | SMBIOS | iMac20,2 |
 
 ---
@@ -49,7 +49,7 @@ OpenCore EFI for the Lenovo ThinkCentre P330 Tiny running macOS Tahoe 26.5
 
 ### Identify your model
 
-This EFI targets the **Lenovo ThinkCentre P330 Tiny** with an **Intel Core i7-9700T (Coffee Lake)** and **Intel UHD Graphics 630**. Confirm your machine matches the Configuration table above before using this EFI.
+This EFI targets the **Lenovo ThinkStation P330 Tiny** with an **Intel Core i7-9700T (Coffee Lake)** and **Intel UHD Graphics 630**. Confirm your machine matches the Configuration table above before using this EFI.
 
 ### BIOS settings
 
