@@ -390,7 +390,7 @@
 				<key>Comment</key>
 				<string>V1.0</string>
 				<key>Enabled</key>
-				<true/>
+				<false/>
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/IOSkywalkFamily</string>
 				<key>MaxKernel</key>
@@ -408,7 +408,7 @@
 				<key>Comment</key>
 				<string>V1200.12.2b1</string>
 				<key>Enabled</key>
-				<true/>
+				<false/>
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/IO80211FamilyLegacy</string>
 				<key>MaxKernel</key>
@@ -426,7 +426,7 @@
 				<key>Comment</key>
 				<string>V1400.1.1</string>
 				<key>Enabled</key>
-				<true/>
+				<false/>
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/AirPortBrcmNIC</string>
 				<key>MaxKernel</key>
@@ -602,35 +602,17 @@
 				<key>Arch</key>
 				<string>x86_64</string>
 				<key>BundlePath</key>
-				<string>BrcmFirmwareRepo.kext</string>
+				<string>RTL8814AirLayer.kext</string>
 				<key>Comment</key>
-				<string>V2.7.2 - Broadcom bluetooth firmware store for BrcmPatchRAM3 (macOS 10.15+)</string>
+				<string>RTL8814AirLayer integrated (RTWUSBController)</string>
 				<key>Enabled</key>
 				<true/>
 				<key>ExecutablePath</key>
-				<string>Contents/MacOS/BrcmFirmwareRepo</string>
+				<string>Contents/MacOS/RTL8814AirLayer</string>
 				<key>MaxKernel</key>
 				<string></string>
 				<key>MinKernel</key>
-				<string>19.0.0</string>
-				<key>PlistPath</key>
-				<string>Contents/Info.plist</string>
-			</dict>
-			<dict>
-				<key>Arch</key>
-				<string>x86_64</string>
-				<key>BundlePath</key>
-				<string>BrcmPatchRAM3.kext</string>
-				<key>Comment</key>
-				<string>V2.7.2 - Firmware upload for Broadcom RAMUSB bluetooth (macOS 10.15+, pair with BlueToolFixup on 12+)</string>
-				<key>Enabled</key>
-				<true/>
-				<key>ExecutablePath</key>
-				<string>Contents/MacOS/BrcmPatchRAM3</string>
-				<key>MaxKernel</key>
 				<string></string>
-				<key>MinKernel</key>
-				<string>19.0.0</string>
 				<key>PlistPath</key>
 				<string>Contents/Info.plist</string>
 			</dict>
@@ -643,7 +625,7 @@
 				<key>Comment</key>
 				<string>Allow IOSkywalk Downgrade</string>
 				<key>Enabled</key>
-				<true/>
+				<false/>
 				<key>Identifier</key>
 				<string>com.apple.iokit.IOSkywalkFamily</string>
 				<key>MaxKernel</key>
@@ -925,10 +907,10 @@
 				AAAAAAAAAAAAAAAAAAA=
 				</data>
 				<key>boot-args</key>
-				<string>alcid=11 -v -lilubetaall -igfxhdmidivs -igfxmpc</string>
+				<string>alcid=11 -v -lilubetaall -igfxhdmidivs -igfxmpc rtlair=2 rtlawdl=1 rtlawdl_tx=1 rtlawdl_mcc=1 rtlawdl_ratemax=2 rtlairtrust=25G342</string>
 				<key>csr-active-config</key>
 				<data>
-				AwAAAA==
+				AwgAAA==
 				</data>
 				<key>prev-lang:kbd</key>
 				<data>
@@ -1008,7 +990,7 @@
 			<key>AdviseFeatures</key>
 			<false/>
 			<key>MLB</key>
-			<string>W0000000000100000</string>
+			<string>M0000000000000001</string>
 			<key>MaxBIOSVersion</key>
 			<false/>
 			<key>ProcessorType</key>

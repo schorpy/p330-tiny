@@ -1,6 +1,6 @@
 # Lenovo ThinkStation P330 Tiny Hackintosh
 
-OpenCore EFI for the Lenovo ThinkStation P330 Tiny running macOS Tahoe 26.5
+OpenCore EFI for the Lenovo ThinkStation P330 Tiny running macOS Tahoe 26 (tested on 26.7.3, build 25G342), with **native macOS Wi-Fi and AirDrop** on a USB Realtek adapter.
 
 ---
 ## Configuration
@@ -30,8 +30,9 @@ OpenCore EFI for the Lenovo ThinkStation P330 Tiny running macOS Tahoe 26.5
 | HDMI | YES |
 | Monitor (Arzopa Z1rc 16 inch) | YES |
 | Ethernet | YES (Intel I219-LM) |
-| WiFi | YES (TP-Link Archer T2UB Nano AC600, RTL8821CU — TahoeRealtekWiFi.kext) |
-| Bluetooth | YES (Archer T2UB Nano BT 4.2 — BlueToolFixup + RealtekBluetoothFirmware/BrcmPatchRAM3) |
+| WiFi | YES — **native macOS Wi-Fi** (Wi-Fi menu, System Settings) on the Archer T2UB Nano (RTL8821CU): TahoeRealtekWiFi.kext + RTL8814AirLayer.kext |
+| Bluetooth | YES (Archer T2UB Nano BT 4.2 — BlueToolFixup + RealtekBluetoothFirmware) |
+| AirDrop | PARTIAL — iPhone ↔ Mac works at close range (about 10–50 cm), Mac on a **5 GHz** network; experimental, see [AirDrop](#airdrop) |
 | Audio | YES (ALC235, layout-id 11) |
 
 
@@ -41,7 +42,6 @@ OpenCore EFI for the Lenovo ThinkStation P330 Tiny running macOS Tahoe 26.5
 | Feature | Status |
 | --------- | --------------------------------------------------- |
 | DisplayPort (DP) | Not Tested |
-| AirDrop | Not Tested (requires supported WiFi/BT) |
 | DRM | Software DRM works in Chrome-based browsers |
 
 ---
@@ -69,7 +69,7 @@ This EFI targets the **Lenovo ThinkStation P330 Tiny** with an **Intel Core i7-9
 5. In Disk Utility, erase the target disk as **APFS** with a **GUID Partition Map**.
 6. Complete the macOS installation and boot into the system.
 7. Mount the internal drive's EFI partition and copy the same `EFI` folder there so the system boots without the USB.
-8. **Generate your own SMBIOS** (serial, MLB, SmUUID, ROM) with GenSMBIOS — never reuse the serials from this repo for iServices.
+8. **Generate your own SMBIOS** (serial, MLB, SmUUID, ROM) with GenSMBIOS and put it in `PlatformInfo > Generic`. The `config.plist` here ships with placeholder values (`W00000000001`, `M0000000000000001`); iMessage/FaceTime need your own.
 
 ### Upgrade
 
@@ -81,11 +81,36 @@ This EFI targets the **Lenovo ThinkStation P330 Tiny** with an **Intel Core i7-9
 # Notes
 
 - **BIOS**: disable Secure Boot and CFG Lock, disable VT-d (or keep `DisableIoMapper`), set DVMT Pre-Allocated to 64MB+.
-- **USB WiFi**: the TP-Link Archer T2UB Nano (RTL8821CU, `2357:013C` / `0BDA:C820`) works via `TahoeRealtekWiFi.kext` (rtw88 port, macOS 13+).
-  - **Important**: connect to the internet via Ethernet cable first. USB WiFi is not available until its driver is installed, so Ethernet is required to download the driver.
-- **Bluetooth**: the Archer T2UB Nano's BT 4.2 works with `BlueToolFixup` + `RealtekBluetoothFirmware` + `BrcmFirmwareRepo`/`BrcmPatchRAM3`. The config also resets `bluetoothExternalDongleFailed` and `bluetoothInternalControllerInfo` via NVRAM Add/Delete.
+- **USB WiFi**: the TP-Link Archer T2UB Nano (RTL8821CU, `2357:013C` / `0BDA:C820`) works as **native macOS Wi-Fi** through `TahoeRealtekWiFi.kext` (radio driver) and `RTL8814AirLayer.kext` (makes macOS treat it like an Apple Wi-Fi card). Both load from OpenCore, so no app or installer is needed. The old Tahoe Wi-Fi menu-bar app is not used anymore.
+  - Do **not** enable `IOSkywalkFamily`, `IO80211FamilyLegacy` or `AirPortBrcmNIC` (they stay disabled in this config): the AirLayer uses macOS's own Wi-Fi stack.
+  - Boot-args used: `rtlair=2` (native Wi-Fi), `rtlawdl=1` (`awdl0`), `rtlairtrust=25G342`. The AirLayer only starts on macOS builds listed in its version gate or named by `rtlairtrust`; after a macOS update, set it to your new build (`sw_vers -buildVersion`).
+- **Bluetooth**: the Archer T2UB Nano's BT 4.2 works with `BlueToolFixup` + `RealtekBluetoothFirmware`. The Broadcom kexts (`BrcmPatchRAM3`, `BrcmFirmwareRepo`) were removed; they are only for Broadcom Bluetooth. The config also resets `bluetoothExternalDongleFailed` and `bluetoothInternalControllerInfo` via NVRAM Add/Delete.
 - **macOS Tahoe root patches**: use [laobamac/OCLP-Mod](https://github.com/laobamac/OCLP-Mod) for graphics/audio post-install patches on unsupported hardware.
-  - **Important**: connect to the internet via Ethernet cable first, since OCLP-Mod must download KDK/MetalLib files before USB WiFi is working.
+  - OCLP-Mod downloads KDK/MetalLib files; Ethernet is the most reliable connection for that.
+
+---
+# AirDrop
+
+AirDrop runs over AWDL on the USB adapter. It is **experimental**:
+
+- Works: iPhone → Mac (including file transfer) at about 10–50 cm; Mac → iPhone (Finder) sometimes.
+- Not reliable yet at 1 m or more (the adapter's radio from a rear USB port is weak; a USB extension cable helps).
+- Connect the Mac's Wi-Fi to a **5 GHz** network (ideally channel 149, the AirDrop channel). On 2.4 GHz the radio would have to switch bands for AirDrop, which can drop Wi-Fi.
+- On both devices set AirDrop to **Everyone for 10 Minutes** for testing.
+
+This config ships with AirDrop transmit **on**:
+
+```
+rtlair=2 rtlawdl=1 rtlawdl_tx=1 rtlawdl_mcc=1 rtlawdl_ratemax=2 rtlairtrust=25G342
+```
+
+| Boot-arg | Effect |
+| --- | --- |
+| `rtlawdl_tx=1` | AWDL transmit (needed for AirDrop) |
+| `rtlawdl_mcc=1` | serve AirDrop time slots while connected to Wi-Fi |
+| `rtlawdl_ratemax=2` | cap AirDrop data at 24 Mb/s (more robust at a distance) |
+
+To use native Wi-Fi without AirDrop, remove those three boot-args.
 
 ---
 # iPhone USB pairing
@@ -102,19 +127,21 @@ If macOS refuses to pair or trust a connected iPhone (no "Allow" prompt, device 
 ---
 # Custom kexts
 
-WiFi and Bluetooth on the TP-Link Archer T2UB Nano use custom-built kexts included in this EFI.
+WiFi, AirDrop and Bluetooth on the TP-Link Archer T2UB Nano use custom-built kexts included in this EFI.
 
-## TahoeRealtekWiFi.kext
+## TahoeRealtekWiFi.kext + RTL8814AirLayer.kext
 
-- **Source**: [danielnmaldonado/TahoeRealtekWiFi](https://github.com/danielnmaldonado/TahoeRealtekWiFi)
-- **Location**: `EFI/OC/Kexts/TahoeRealtekWiFi.kext`
-- **Build**: 67 (version number never bumped; identify by install date / `otool`)
+- **Source**: [schorpy/TahoeRealtekWiFi, branch `unified-airlayer`](https://github.com/schorpy/TahoeRealtekWiFi/tree/unified-airlayer) — both kexts are built from that one repo (`./build.command --kext`, `cd airlayer && ./build_airlayer.sh`).
+- **Location**: `EFI/OC/Kexts/TahoeRealtekWiFi.kext`, `EFI/OC/Kexts/RTL8814AirLayer.kext` (the AirLayer loads after the driver).
+- The driver is [danielnmaldonado/TahoeRealtekWiFi](https://github.com/danielnmaldonado/TahoeRealtekWiFi) with a radio interface added; the AirLayer is [DrogaBox/RTL8814Native](https://github.com/DrogaBox/RTL8814Native)'s native IO80211 layer, attached to this driver.
 
-Changes:
+Changes in the driver (see the fork's README for details):
 
-- `src/RTL8192EUDataPath.c` — `rtw_92e_beacon_timeout_ms`: beacon-loss watchdog floor **2s → 30s** (cap 60s). Fixes WiFi death during Bluetooth connect bursts. Verified in the installed binary via `otool` (`0x7530` / `0xEA60`).
-- `kext/RTW88CoexBackend.inc` — `coex88Input`: `input.scanning = (target == IEEE80211_S_SCAN || target != IEEE80211_S_RUN)`. Claims coex scan priority whenever unassociated, so BT paging cannot starve reconnect beacons.
-- `vendor/itl80211/openbsd/net80211/ieee80211_proto.c` — `ieee80211_set_beacon_miss_threshold` `MIN()` units bug fixed (not used by this driver path; corrected anyway).
+- Radio interface (`rtlRadio*` calls) for the AirLayer: scan, join, data, raw 802.11 TX, AWDL receive hook, AWDL channel slots, AWDL port, delivery reports.
+- AirDrop fixes: AWDL frames sent and labelled on the channel the radio is really on, hardware ACK port for `awdl0` with all unicast accepted while AWDL is active, recoverable channel switches, delivery reports reaching the AirLayer, rate fallback for AirDrop data.
+- Native-Wi-Fi fixes: the private (randomized) MAC no longer breaks the chip identity check; scans while connected no longer drop the link.
+
+The earlier local changes to build 67 (beacon-loss watchdog 2s → 30s in the RTL8192EU path, coex scan priority while unassociated) are **not** part of this build.
 
 ## RealtekBluetoothFirmware.kext (v1.0.7)
 
@@ -133,4 +160,5 @@ Changes:
 - [Acidanthera](https://github.com/acidanthera) — OpenCore, Lilu, VirtualSMC, WhateverGreen, AppleALC
 - [chris1111](https://github.com/chris1111) — [Wireless USB OC Adapter drivers](https://github.com/chris1111/wireless-usb-big-sur-adapter) (RTL8821CU)
 - [danielnmaldonado](https://github.com/danielnmaldonado) — [TahoeRealtekWiFi](https://github.com/danielnmaldonado/TahoeRealtekWiFi) (RTL8821CU WiFi) and Realtek Bluetooth firmware fixes
+- [DrogaBox](https://github.com/DrogaBox) — [RTL8814Native](https://github.com/DrogaBox/RTL8814Native): the AirLayer (native macOS Wi-Fi + AWDL) and the reverse engineering behind it
 - [laobamac](https://github.com/laobamac) — [OCLP-Mod](https://github.com/laobamac/OCLP-Mod) root patches
