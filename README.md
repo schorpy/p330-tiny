@@ -13,7 +13,7 @@ OpenCore EFI for the Lenovo ThinkStation P330 Tiny running macOS Tahoe 26 (teste
 | Memory | DDR4 SODIMM |
 | Hard Disk | NVMe SSD |
 | Integrated Graphics | Intel UHD Graphics 630 |
-| Monitor | Arzopa Z1rc 16 inch (2560x1600@60hzs, HDMI) |
+| Monitor | Arzopa Z1rc 16 inch (2560x1600 @ ~49 Hz via injected EDID, HDMI) |
 | Sound Card | Realtek ALC235 (layout-id: 11) |
 | Ethernet | Intel I219-LM |
 | Wireless Card | TP-Link Archer T2UB Nano (RTL8821CU, USB) |
@@ -85,6 +85,8 @@ This EFI targets the **Lenovo ThinkStation P330 Tiny** with an **Intel Core i7-9
   - `IOSkywalkFamily`, `IO80211FamilyLegacy` and `AirPortBrcmNIC` (the legacy Broadcom Wi-Fi stack) are **not** included and must not be added: the AirLayer uses macOS's own Wi-Fi stack.
   - Boot-args used: `rtlair=2` (native Wi-Fi), `rtlawdl=1` (`awdl0`), `rtlairtrust=25G342`. The AirLayer only starts on macOS builds listed in its version gate or named by `rtlairtrust`; after a macOS update, set it to your new build (`sw_vers -buildVersion`).
 - **Bluetooth**: the Archer T2UB Nano's BT 4.2 works with `BlueToolFixup` + `RealtekBluetoothFirmware`. The Broadcom kexts (`BrcmPatchRAM3`, `BrcmFirmwareRepo`) were removed; they are only for Broadcom Bluetooth. The config also resets `bluetoothExternalDongleFailed` and `bluetoothInternalControllerInfo` via NVRAM Add/Delete.
+- **Display (ARZOPA 2560x1600 over HDMI)**: the UHD 630's HDMI port tops out around 225 MHz pixel clock, too low for 2560x1600 @ 60 Hz. The config injects the monitor's EDID (`AAPL01,override-no-connect` on `PciRoot(0x0)/Pci(0x2,0x0)`) with a 2560x1600 @ 48.67 Hz mode (220 MHz), so the full resolution works without a pixel-clock override. Connector 0 is set up for HDMI (`framebuffer-con0-busid` 5, `-pipe` 9, `-type` 0x400) with `framebuffer-stolenmem` 19 MB and `framebuffer-fbmem` 9 MB.
+  - **Different monitor?** Remove the `AAPL01,override-no-connect` property; the injected EDID only fits the ARZOPA panel. (Its serial number was zeroed in this copy.)
 - **Audio**: macOS Tahoe removed AppleHDA; [laobamac/SimpleHDA](https://github.com/laobamac/SimpleHDA) (`SimpleHDA.kext`, Lilu plugin, loaded after AppleALC) restores native AppleHDA with `alcid=11`.
 - **macOS Tahoe root patches**: use [laobamac/OCLP-Mod](https://github.com/laobamac/OCLP-Mod) for graphics/audio post-install patches on unsupported hardware.
   - OCLP-Mod downloads KDK/MetalLib files; Ethernet is the most reliable connection for that.

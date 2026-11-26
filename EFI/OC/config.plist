@@ -191,6 +191,8 @@
 				<data>
 				BwCbPg==
 				</data>
+				<key>AAPL01,override-no-connect</key>
+				<data>AP///////wAe5GAhAAAAABUkAQOAIhV4Lg+VrlJDsCYPUFSla4DRwIHAgQCBgKnAswABAQEB8FUAoKBAPmAwIDUAWNcQAAAaIE4AoKBAPmAwIDUAWNcQAAAaAAAA/QAeTB6gKAAKICAgICAgAAAA/ABBUlpPUEEKICAgICAgAR8CAzLCRRAnAgMEIwkHB4MBAADkDwAAAeMFwgBnAwwAEAAAUGfYXcQBUMAA5gYHAWJiAJ1OAKCgoClQMCA1AFjXEAAAHgI6gBhxOC1AjEVkO0CEAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAyw==</data>
 				<key>device-id</key>
 				<data>
 				mz4AAA==
@@ -205,14 +207,6 @@
 				<data>
 				AQAAAA==
 				</data>
-				<key>enable-hdmi20</key>
-				<data>
-				AQAAAA==
-				</data>
-				<key>enable-max-pixel-clock-override</key>
-				<data>
-				AQAAAA==
-				</data>
 				<key>enable-metal</key>
 				<data>
 				AQAAAA==
@@ -223,19 +217,23 @@
 				</data>
 				<key>framebuffer-con0-busid</key>
 				<data>
-				AQAAAA==
+				BQAAAA==
 				</data>
 				<key>framebuffer-con0-enable</key>
 				<data>
 				AQAAAA==
 				</data>
+				<key>framebuffer-con0-index</key>
+				<data>
+				AQAAAA==
+				</data>
 				<key>framebuffer-con0-pipe</key>
 				<data>
-				EgAAAA==
+				CQAAAA==
 				</data>
 				<key>framebuffer-con0-type</key>
 				<data>
-				AAgAAA==
+				AAQAAA==
 				</data>
 				<key>framebuffer-con1-busid</key>
 				<data>
@@ -244,6 +242,10 @@
 				<key>framebuffer-con1-enable</key>
 				<data>
 				AQAAAA==
+				</data>
+				<key>framebuffer-con1-index</key>
+				<data>
+				AgAAAA==
 				</data>
 				<key>framebuffer-con1-pipe</key>
 				<data>
@@ -273,9 +275,17 @@
 				<data>
 				AAgAAA==
 				</data>
+				<key>framebuffer-fbmem</key>
+				<data>
+				AACQAA==
+				</data>
 				<key>framebuffer-patch-enable</key>
 				<data>
 				AQAAAA==
+				</data>
+				<key>framebuffer-stolenmem</key>
+				<data>
+				AAAwAQ==
 				</data>
 				<key>framebuffer-unifiedmem</key>
 				<data>
@@ -854,7 +864,7 @@
 				AAAAAAAAAAAAAAAAAAA=
 				</data>
 				<key>boot-args</key>
-				<string>alcid=11 -v -lilubetaall -igfxhdmidivs -igfxmpc rtlair=2 rtlawdl=1 rtlawdl_tx=1 rtlawdl_mcc=1 rtlawdl_ratemax=2 rtlairtrust=25G342</string>
+				<string>alcid=11 -v -lilubetaall -igfxhdmidivs rtlair=2 rtlawdl=1 rtlawdl_tx=1 rtlawdl_mcc=1 rtlawdl_ratemax=2 rtlairtrust=25G342</string>
 				<key>csr-active-config</key>
 				<data>
 				AwgAAA==
