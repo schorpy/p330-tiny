@@ -30,7 +30,7 @@ OpenCore EFI for the Lenovo ThinkStation P330 Tiny running macOS Tahoe 26 (teste
 | HDMI | YES |
 | Monitor (Arzopa Z1rc 16 inch) | YES |
 | Ethernet | YES (Intel I219-LM) |
-| WiFi | YES — **native macOS Wi-Fi** (Wi-Fi menu, System Settings) on the Archer T2UB Nano (RTL8821CU): TahoeRealtekWiFi.kext + RTL8814AirLayer.kext |
+| WiFi | YES — **native macOS Wi-Fi** (Wi-Fi menu, System Settings) on the Archer T2UB Nano (RTL8821CU): TahoeRealtekWiFi.kext + RTL88AirLayer.kext |
 | Bluetooth | YES (Archer T2UB Nano BT 4.2 — BlueToolFixup + RealtekBluetoothFirmware) |
 | AirDrop | PARTIAL — iPhone ↔ Mac works at close range (about 10–50 cm), Mac on a **5 GHz** network; experimental, see [AirDrop](#airdrop) |
 | Audio | YES (ALC235, layout-id 11 — AppleALC + [SimpleHDA](https://github.com/laobamac/SimpleHDA) to restore native AppleHDA on Tahoe) |
@@ -81,7 +81,7 @@ This EFI targets the **Lenovo ThinkStation P330 Tiny** with an **Intel Core i7-9
 # Notes
 
 - **BIOS**: disable Secure Boot and CFG Lock, disable VT-d (or keep `DisableIoMapper`), set DVMT Pre-Allocated to 64MB+.
-- **USB WiFi**: the TP-Link Archer T2UB Nano (RTL8821CU, `2357:013C` / `0BDA:C820`) works as **native macOS Wi-Fi** through `TahoeRealtekWiFi.kext` (radio driver) and `RTL8814AirLayer.kext` (makes macOS treat it like an Apple Wi-Fi card). Both load from OpenCore, so no app or installer is needed. The old Tahoe Wi-Fi menu-bar app is not used anymore.
+- **USB WiFi**: the TP-Link Archer T2UB Nano (RTL8821CU, `2357:013C` / `0BDA:C820`) works as **native macOS Wi-Fi** through `TahoeRealtekWiFi.kext` (radio driver) and `RTL88AirLayer.kext` (makes macOS treat it like an Apple Wi-Fi card). Both load from OpenCore, so no app or installer is needed. The old Tahoe Wi-Fi menu-bar app is not used anymore.
   - `IOSkywalkFamily`, `IO80211FamilyLegacy` and `AirPortBrcmNIC` (the legacy Broadcom Wi-Fi stack) are **not** included and must not be added: the AirLayer uses macOS's own Wi-Fi stack.
   - Boot-args used: `rtlair=2` (native Wi-Fi), `rtlawdl=1` (`awdl0`), `rtlairtrust=25G342`. The AirLayer only starts on macOS builds listed in its version gate or named by `rtlairtrust`; after a macOS update, set it to your new build (`sw_vers -buildVersion`).
 - **Bluetooth**: the Archer T2UB Nano's BT 4.2 works with `BlueToolFixup` + `RealtekBluetoothFirmware`. The Broadcom kexts (`BrcmPatchRAM3`, `BrcmFirmwareRepo`) were removed; they are only for Broadcom Bluetooth. The config also resets `bluetoothExternalDongleFailed` and `bluetoothInternalControllerInfo` via NVRAM Add/Delete.
@@ -134,10 +134,10 @@ If macOS refuses to pair or trust a connected iPhone (no "Allow" prompt, device 
 
 WiFi, AirDrop and Bluetooth on the TP-Link Archer T2UB Nano use custom-built kexts included in this EFI.
 
-## TahoeRealtekWiFi.kext + RTL8814AirLayer.kext
+## TahoeRealtekWiFi.kext + RTL88AirLayer.kext
 
 - **Source**: [schorpy/TahoeRealtekWiFi, branch `unified-airlayer`](https://github.com/schorpy/TahoeRealtekWiFi/tree/unified-airlayer) — both kexts are built from that one repo (`./build.command --kext`, `cd airlayer && ./build_airlayer.sh`).
-- **Location**: `EFI/OC/Kexts/TahoeRealtekWiFi.kext`, `EFI/OC/Kexts/RTL8814AirLayer.kext` (the AirLayer loads after the driver).
+- **Location**: `EFI/OC/Kexts/TahoeRealtekWiFi.kext`, `EFI/OC/Kexts/RTL88AirLayer.kext` (the AirLayer loads after the driver).
 - The driver is [danielnmaldonado/TahoeRealtekWiFi](https://github.com/danielnmaldonado/TahoeRealtekWiFi) with a radio interface added; the AirLayer is [DrogaBox/RTL8814Native](https://github.com/DrogaBox/RTL8814Native)'s native IO80211 layer, attached to this driver.
 
 Changes in the driver (see the fork's README for details):
