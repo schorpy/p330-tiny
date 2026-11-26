@@ -33,7 +33,7 @@ OpenCore EFI for the Lenovo ThinkStation P330 Tiny running macOS Tahoe 26 (teste
 | WiFi | YES — **native macOS Wi-Fi** (Wi-Fi menu, System Settings) on the Archer T2UB Nano (RTL8821CU): TahoeRealtekWiFi.kext + RTL8814AirLayer.kext |
 | Bluetooth | YES (Archer T2UB Nano BT 4.2 — BlueToolFixup + RealtekBluetoothFirmware) |
 | AirDrop | PARTIAL — iPhone ↔ Mac works at close range (about 10–50 cm), Mac on a **5 GHz** network; experimental, see [AirDrop](#airdrop) |
-| Audio | YES (ALC235, layout-id 11) |
+| Audio | YES (ALC235, layout-id 11 — AppleALC + [SimpleHDA](https://github.com/laobamac/SimpleHDA) to restore native AppleHDA on Tahoe) |
 
 
 ---
@@ -82,9 +82,10 @@ This EFI targets the **Lenovo ThinkStation P330 Tiny** with an **Intel Core i7-9
 
 - **BIOS**: disable Secure Boot and CFG Lock, disable VT-d (or keep `DisableIoMapper`), set DVMT Pre-Allocated to 64MB+.
 - **USB WiFi**: the TP-Link Archer T2UB Nano (RTL8821CU, `2357:013C` / `0BDA:C820`) works as **native macOS Wi-Fi** through `TahoeRealtekWiFi.kext` (radio driver) and `RTL8814AirLayer.kext` (makes macOS treat it like an Apple Wi-Fi card). Both load from OpenCore, so no app or installer is needed. The old Tahoe Wi-Fi menu-bar app is not used anymore.
-  - Do **not** enable `IOSkywalkFamily`, `IO80211FamilyLegacy` or `AirPortBrcmNIC` (they stay disabled in this config): the AirLayer uses macOS's own Wi-Fi stack.
+  - `IOSkywalkFamily`, `IO80211FamilyLegacy` and `AirPortBrcmNIC` (the legacy Broadcom Wi-Fi stack) are **not** included and must not be added: the AirLayer uses macOS's own Wi-Fi stack.
   - Boot-args used: `rtlair=2` (native Wi-Fi), `rtlawdl=1` (`awdl0`), `rtlairtrust=25G342`. The AirLayer only starts on macOS builds listed in its version gate or named by `rtlairtrust`; after a macOS update, set it to your new build (`sw_vers -buildVersion`).
 - **Bluetooth**: the Archer T2UB Nano's BT 4.2 works with `BlueToolFixup` + `RealtekBluetoothFirmware`. The Broadcom kexts (`BrcmPatchRAM3`, `BrcmFirmwareRepo`) were removed; they are only for Broadcom Bluetooth. The config also resets `bluetoothExternalDongleFailed` and `bluetoothInternalControllerInfo` via NVRAM Add/Delete.
+- **Audio**: macOS Tahoe removed AppleHDA; [laobamac/SimpleHDA](https://github.com/laobamac/SimpleHDA) (`SimpleHDA.kext`, Lilu plugin, loaded after AppleALC) restores native AppleHDA with `alcid=11`.
 - **macOS Tahoe root patches**: use [laobamac/OCLP-Mod](https://github.com/laobamac/OCLP-Mod) for graphics/audio post-install patches on unsupported hardware.
   - OCLP-Mod downloads KDK/MetalLib files; Ethernet is the most reliable connection for that.
 
@@ -161,4 +162,4 @@ Changes:
 - [chris1111](https://github.com/chris1111) — [Wireless USB OC Adapter drivers](https://github.com/chris1111/wireless-usb-big-sur-adapter) (RTL8821CU)
 - [danielnmaldonado](https://github.com/danielnmaldonado) — [TahoeRealtekWiFi](https://github.com/danielnmaldonado/TahoeRealtekWiFi) (RTL8821CU WiFi) and Realtek Bluetooth firmware fixes
 - [DrogaBox](https://github.com/DrogaBox) — [RTL8814Native](https://github.com/DrogaBox/RTL8814Native): the AirLayer (native macOS Wi-Fi + AWDL) and the reverse engineering behind it
-- [laobamac](https://github.com/laobamac) — [OCLP-Mod](https://github.com/laobamac/OCLP-Mod) root patches
+- [laobamac](https://github.com/laobamac) — [OCLP-Mod](https://github.com/laobamac/OCLP-Mod) root patches and [SimpleHDA](https://github.com/laobamac/SimpleHDA) (native AppleHDA on Tahoe)
