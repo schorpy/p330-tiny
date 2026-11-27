@@ -145,6 +145,9 @@ Changes in the driver (see the fork's README for details):
 - Radio interface (`rtlRadio*` calls) for the AirLayer: scan, join, data, raw 802.11 TX, AWDL receive hook, AWDL channel slots, AWDL port, delivery reports.
 - AirDrop fixes: AWDL frames sent and labelled on the channel the radio is really on, hardware ACK port for `awdl0` with all unicast accepted while AWDL is active, recoverable channel switches, delivery reports reaching the AirLayer, rate fallback for AirDrop data.
 - Native-Wi-Fi fixes: the private (randomized) MAC no longer breaks the chip identity check; scans while connected no longer drop the link.
+- Nearby networks the dongle hears stay in the Wi-Fi menu for 10 minutes; hidden networks are left out.
+- Fast joins on the network's known channel (1–2 s), and the Wi-Fi menu keeps its list while a join runs.
+- The dongle's LED is on while Wi-Fi runs and blinks with traffic.
 
 The earlier local changes to build 67 (beacon-loss watchdog 2s → 30s in the RTL8192EU path, coex scan priority while unassociated) are **not** part of this build.
 
